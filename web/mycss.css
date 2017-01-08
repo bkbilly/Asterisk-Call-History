@@ -1,0 +1,62 @@
+
+/* sensor */
+.hostdiv {
+	top: 50px;
+	width: 80%;
+	border-radius: 5px;
+	background-color: rgba(0, 0, 15, 0.7);
+	/*margin: 1em;*/
+	margin: 0px auto;
+	/*box-shadow: inset 0px 30px 40px -20px white;*/
+	position: relative;
+	padding: 5px;
+	border: 1px solid #666;
+}
+
+.callfromto { display: inline; }
+.callDuration { display: inline; }
+.callDate { display: inline; float: right; }
+.callStatus { display: inline; float: right; }
+
+
+
+
+
+/* Tabs */
+ul.tab {
+    position: fixed;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    z-index: 100;
+}
+
+ul.tab li {float: left; width: 33.3%;}
+
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+    width: 100%;
+}
+
+ul.tab li a:hover {background-color: #ddd;}
+
+ul.tab li a:focus, .active {background-color: #888;}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+}
+
+ul li {
+	padding: 0;
+	background: #333;
+}

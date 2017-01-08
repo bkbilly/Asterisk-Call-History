@@ -1,0 +1,9 @@
+{
+    "options": {
+        "callDataFile": "/var/log/asterisk/cdr-csv/Master.csv",
+        "externalNumbers": [
+        ],
+        "internalNumbers": [
+        ]
+    }
+}
