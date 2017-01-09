@@ -32,6 +32,7 @@ class AsteriskCallHistory():
             log_time = callLog[9]
             log_duration = int(callLog[13])
             log_callStatus = callLog[14]
+            log_result = callLog[7] + ' ' + callLog[8]
 
             if self.isInListType(log_from, self.configuration['options']['externalNumbers']):
                 callFromType = "external"
@@ -55,6 +56,7 @@ class AsteriskCallHistory():
                 "callDuration": log_duration,
                 "callDate": log_time,
                 "callStatus": log_callStatus,
+                "callResult": log_result
             })
         return self.callHistory
 

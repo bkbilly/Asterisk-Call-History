@@ -3,6 +3,7 @@ var sensor = '<div class="hostdiv" style="{cssDiv}">\
 	<div class="callStatus">{callStatus}</div><br>\
 	<div class="callDate">{callDate}</div>\
 	<div class="callDuration">{callDuration}</div>\
+	<div class="callResult">{callResult}</div>\
 </div>'
 
 $( document ).ready(function() {
@@ -35,6 +36,7 @@ function startAgain(){
 			tmpsensor = tmpsensor.replace(/\{callDuration\}/g, item.callDuration + ' sec')
 			tmpsensor = tmpsensor.replace(/\{callStatus\}/g, item.callStatus)
 			tmpsensor = tmpsensor.replace(/\{callDate\}/g, item.callDate)
+			tmpsensor = tmpsensor.replace(/\{callResult\}/g, item.callResult)
 
 			if (item.callFromType === "internal" && item.callToType === "internal")
 				$(tmpsensor).appendTo("#callLogsInternal");
