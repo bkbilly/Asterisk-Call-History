@@ -1,40 +1,61 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<!-- 	<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-		<meta http-equiv="Pragma" content="no-cache">
-		<meta http-equiv="Expires" content="0">
-	 -->
-		<title>Call History</title>
+		<title>{{ title }}</title>
 		<meta name="viewport" content="width=device-width">
 		<meta name="mobile-web-app-capable" content="yes">
-		<link rel="icon" sizes="192x192" href="icon.png">
+		<link rel="icon" sizes="192x192" href="{{ static_url('icon.png') }}">
 
 
-		<!--script src="Packages/jquery/jquery.min.js"></script>
-		<script src="Packages/jquery/jquery-ui.min.js"></script-->
-		<!--script src="/socket.io/socket.io.js"></script-->
 		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-		<!-- <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script> -->
 
-		<link rel="stylesheet" href="main.css">
-		<link rel="stylesheet" href="mycss.css">
-		<script type="text/javascript" src="myjs.js"></script>
+		<link rel="stylesheet" href="{{ static_url('main.css') }}">
+		<link rel="stylesheet" href="{{ static_url('mycss.css') }}">
+		<script type="text/javascript" src="{{ static_url('myjs.js') }}"></script>
 		
 	</head>
 
 	<body class="bg_japanesecube">
 		<div class="container">
 			<ul class="tab">
-				<li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'callLogsExternal')" id="defaultOpen">External</a></li>
-				<li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'callLogsInternal')">Internal</a></li>
-				<li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'callLogsUnknown')">Unknown</a></li>
+				<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'callLogsExternal')" id="defaultOpen">External</a></li>
+				<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'callLogsInternal')">Internal</a></li>
+				<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'callLogsUnknown')">Unknown</a></li>
 			</ul>
 			<div id="callLogs" class="smallSensors">
-				<div id="callLogsExternal" class="tabcontent"></div>
-				<div id="callLogsInternal" class="tabcontent"></div>
-				<div id="callLogsUnknown" class="tabcontent"></div>
+				<div id="callLogsExternal" class="tabcontent">
+					{% for item in external %}
+						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
+							<div class="callfromto">{{ escape(item['callFrom']) + ' -> ' + escape(item['callTo']) }}</div>
+							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
+							<div class="callDate">{{ escape(item['callDate']) }}</div>
+							<div class="callDuration">{{ escape(str(item['callDuration'])) + ' sec' }}</div>
+							<div class="callResult">{{ escape(item['callResult']) }}</div>
+						</div>
+					{% end %}
+				</div>
+				<div id="callLogsInternal" class="tabcontent">
+					{% for item in internal %}
+						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
+							<div class="callfromto">{{ escape(item['callFrom']) + ' -> ' + escape(item['callTo']) }}</div>
+							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
+							<div class="callDate">{{ escape(item['callDate']) }}</div>
+							<div class="callDuration">{{ escape(str(item['callDuration'])) + ' sec' }}</div>
+							<div class="callResult">{{ escape(item['callResult']) }}</div>
+						</div>
+					{% end %}
+				</div>
+				<div id="callLogsUnknown" class="tabcontent">
+					{% for item in unknown %}
+						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
+							<div class="callfromto">{{ escape(item['callFrom']) + ' -> ' + escape(item['callTo']) }}</div>
+							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
+							<div class="callDate">{{ escape(item['callDate']) }}</div>
+							<div class="callDuration">{{ escape(str(item['callDuration'])) + ' sec' }}</div>
+							<div class="callResult">{{ escape(item['callResult']) }}</div>
+						</div>
+					{% end %}
+				</div>
 			</div>
 		</div>
 	</body>

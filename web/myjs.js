@@ -1,54 +1,9 @@
-var sensor = '<div class="hostdiv" style="{cssDiv}">\
-	<div class="callfromto">{callfromto}</div>\
-	<div class="callStatus">{callStatus}</div><br>\
-	<div class="callDate">{callDate}</div>\
-	<div class="callDuration">{callDuration}</div>\
-	<div class="callResult">{callResult}</div>\
-</div>'
-
 $( document ).ready(function() {
 	document.getElementById("defaultOpen").click();
-	startAgain();
 });
 
-function startAgain(){
-	$("#callLogsInternal").empty();
-	$("#callLogsExternal").empty();
-	$("#callLogsUnknown").empty();
 
-	$.getJSON("getCallHistory.json?limit=100").done(function(data){
-		$.each(data, function(i, item){
-			var tmpsensor = sensor
-
-			callTypeColor = ""
-			if (item.callStatus === "ANSWERED") {
-				callTypeColor = "#030"
-			} else if (item.callStatus === "NO ANSWER") {
-				callTypeColor = "#321"
-			} else if (item.callStatus === "BUSY") {
-				callTypeColor = "#122"
-			} else if (item.callStatus === "FAILED") {
-				callTypeColor = "#330000"
-			}
-			tmpsensor = tmpsensor.replace(/\{cssDiv\}/g, "background-color: " + callTypeColor)
-
-			tmpsensor = tmpsensor.replace(/\{callfromto\}/g, item.callFrom + ' -> ' + item.callTo)
-			tmpsensor = tmpsensor.replace(/\{callDuration\}/g, item.callDuration + ' sec')
-			tmpsensor = tmpsensor.replace(/\{callStatus\}/g, item.callStatus)
-			tmpsensor = tmpsensor.replace(/\{callDate\}/g, item.callDate)
-			tmpsensor = tmpsensor.replace(/\{callResult\}/g, item.callResult)
-
-			if (item.callFromType === "internal" && item.callToType === "internal")
-				$(tmpsensor).appendTo("#callLogsInternal");
-			else if (item.callFromType === "external" || item.callToType === "external")
-				$(tmpsensor).appendTo("#callLogsExternal");
-			else
-				$(tmpsensor).appendTo("#callLogsUnknown");
-		});
-	});
-}
-
-function openCity(evt, cityName) {
+function openTab(evt, cityName) {
     // Declare all variables
     var i, tabcontent, tablinks;
 
