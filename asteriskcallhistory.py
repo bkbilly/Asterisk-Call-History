@@ -34,19 +34,15 @@ class AsteriskCallHistory():
             log_callStatus = callLog[14]
             log_result = callLog[7] + ' ' + callLog[8]
 
-            if self.isInListType(log_from, self.configuration['options']['externalNumbers']):
-                callFromType = "external"
-            elif self.isInListType(log_from, self.configuration['options']['internalNumbers']):
+            if self.isInListType(log_from, self.configuration['options']['internalNumbers']):
                 callFromType = "internal"
             else:
-                callFromType = "unknown"
+                callFromType = "external"
 
-            if self.isInListType(log_to, self.configuration['options']['externalNumbers']):
-                callToType = "external"
-            elif self.isInListType(log_to, self.configuration['options']['internalNumbers']):
+            if self.isInListType(log_to, self.configuration['options']['internalNumbers']):
                 callToType = "internal"
             else:
-                callToType = "unknown"
+                callToType = "external"
 
             self.callHistory.append({
                 "callFrom": log_from,

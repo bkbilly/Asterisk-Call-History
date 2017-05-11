@@ -8,12 +8,13 @@ from CallHistory import AsteriskCallHistory
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        historyExternal, historyInternal, historyUnknown = callhistory.getCallHistory(int(10))
+        historyExternal, historyInternal, historyUnknown = callhistory.getCallHistory(int(100))
+        currentCalls = callhistory.getCurrentStatus()
         self.render("index.html",
                     title="Call History",
                     external=historyExternal,
                     internal=historyInternal,
-                    unknown=historyUnknown)
+                    currentCalls=currentCalls)
 
 
 def make_app():
@@ -24,7 +25,7 @@ def make_app():
     }
 
     return tornado.web.Application([
-        (r"/", MainHandler),
+        (r"/", MainHandler)
     ], **settings)
 
 

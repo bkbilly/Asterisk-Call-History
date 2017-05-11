@@ -8,55 +8,87 @@
 
 
 		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 		<link rel="stylesheet" href="{{ static_url('main.css') }}">
 		<link rel="stylesheet" href="{{ static_url('mycss.css') }}">
+
 		<script type="text/javascript" src="{{ static_url('myjs.js') }}"></script>
 		
 	</head>
 
 	<body class="bg_japanesecube">
-		<div class="container">
-			<ul class="tab">
-				<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'callLogsExternal')" id="defaultOpen">External</a></li>
-				<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'callLogsInternal')">Internal</a></li>
-				<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'callLogsUnknown')">Unknown</a></li>
+		<div>
+		
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+				<li role="presentation"><a href="#external_in" aria-controls="external_in" role="tab" data-toggle="tab">External Calls Incomming</a></li>
+				<li role="presentation"><a href="#external_out" aria-controls="external_out" role="tab" data-toggle="tab">External Calls Outgoing</a></li>
+				<li role="presentation"><a href="#internal" aria-controls="internal" role="tab" data-toggle="tab">Internal Calls</a></li>
+				<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Add Contact</a></li>
 			</ul>
-			<div id="callLogs" class="smallSensors">
-				<div id="callLogsExternal" class="tabcontent">
-					{% for item in external %}
-						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
-							<div class="callfromto">{{ escape(item['callFrom']) + ' -> ' + escape(item['callTo']) }}</div>
-							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
-							<div class="callDate">{{ escape(item['callDate']) }}</div>
-							<div class="callDuration">{{ escape(str(item['callDuration'])) + ' sec' }}</div>
-							<div class="callResult">{{ escape(item['callResult']) }}</div>
+		
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="home">
+					{% for item in currentCalls %}
+					{% if item['Extension'] != "" %}
+						<div class="hostdiv">
+							<div class="callfromto">{{ escape(item['CallerID']) }} &#8680 {{ escape(item['Extension']) }}</div>
+							<div class="callStatus">{{ escape(item['Application']) }}</div><br>
+							<div class="callDate">{{ escape(item['State']) }}</div>
+							<div class="callDuration">{{ escape(str(item['Duration'])) }}</div>
 						</div>
 					{% end %}
+					{% end %}
 				</div>
-				<div id="callLogsInternal" class="tabcontent">
+				<div role="tabpanel" class="tab-pane" id="external_in">
+					{% for item in external %}
+					{% if item['callFromType'] == "external" %}
+						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
+							<div data-toggle="tooltip" title="{{ escape(item['callFrom']) }} -> {{ escape(item['callTo']) }}"
+								class="callfromto">{{ escape(item['callFromID']) }} &#8680 {{ escape(item['callToID']) }}</div>
+							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
+							<div class="callDate">{{ escape(item['callDate']) }}</div>
+							<div class="callDuration">{{ escape(str(item['callDuration'])) }}</div>
+							<!-- <div class="callResult">{{ escape(item['callResult']) }}</div> -->
+						</div>
+					{% end %}
+					{% end %}
+				</div>
+				<div role="tabpanel" class="tab-pane" id="external_out">
+					{% for item in external %}
+					{% if item['callFromType'] == "internal" %}
+						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
+							<div data-toggle="tooltip" title="{{ escape(item['callFrom']) }} -> {{ escape(item['callTo']) }}"
+								class="callfromto">{{ escape(item['callFromID']) }} &#8680 {{ escape(item['callToID']) }}</div>
+							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
+							<div class="callDate">{{ escape(item['callDate']) }}</div>
+							<div class="callDuration">{{ escape(str(item['callDuration'])) }}</div>
+							<!-- <div class="callResult">{{ escape(item['callResult']) }}</div> -->
+						</div>
+					{% end %}
+					{% end %}
+				</div>
+				<div role="tabpanel" class="tab-pane" id="internal">
 					{% for item in internal %}
 						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
-							<div class="callfromto">{{ escape(item['callFrom']) + ' -> ' + escape(item['callTo']) }}</div>
+							<div data-toggle="tooltip" title="{{ escape(item['callFrom']) }} -> {{ escape(item['callTo']) }}"
+								class="callfromto">{{ escape(item['callFromID']) }} &#8680 {{ escape(item['callToID']) }}</div>
 							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
 							<div class="callDate">{{ escape(item['callDate']) }}</div>
-							<div class="callDuration">{{ escape(str(item['callDuration'])) + ' sec' }}</div>
-							<div class="callResult">{{ escape(item['callResult']) }}</div>
+							<div class="callDuration">{{ escape(str(item['callDuration'])) }}</div>
+							<!-- <div class="callResult">{{ escape(item['callResult']) }}</div> -->
 						</div>
 					{% end %}
 				</div>
-				<div id="callLogsUnknown" class="tabcontent">
-					{% for item in unknown %}
-						<div class="hostdiv" style="background-color: {{ escape(item['callColor']) }};">
-							<div class="callfromto">{{ escape(item['callFrom']) + ' -> ' + escape(item['callTo']) }}</div>
-							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
-							<div class="callDate">{{ escape(item['callDate']) }}</div>
-							<div class="callDuration">{{ escape(str(item['callDuration'])) + ' sec' }}</div>
-							<div class="callResult">{{ escape(item['callResult']) }}</div>
-						</div>
-					{% end %}
+				<div role="tabpanel" class="tab-pane" id="settings">
+					Settings
 				</div>
 			</div>
+		
 		</div>
 	</body>
 </html>
