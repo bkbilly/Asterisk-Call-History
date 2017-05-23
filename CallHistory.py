@@ -13,6 +13,7 @@ class AsteriskCallHistory():
         # Global Variables
         self.configfile = configfile
         self.configuration = self.ReadConfig()
+        self.allCallerIDs = self.getAllCallerIDs()
 
     def getCallHistory(self, limit):
         with open(self.configuration['options']['callDataFile'], 'rb') as f:
@@ -21,11 +22,9 @@ class AsteriskCallHistory():
             asteriskCalls.reverse()  # Read log botton up
         #if limit:
         #    asteriskCalls = asteriskCalls[:limit]
-
-        self.allCallerIDs = self.getAllCallerIDs()
+        
         callHistoryExternal = []
         callHistoryInternal = []
-        callHistoryUnknown = []
 
         for callLog in asteriskCalls:
             callFromType = "unknown"
@@ -79,13 +78,11 @@ class AsteriskCallHistory():
                 callHistoryInternal.append(callHistoryTmp)
             elif callFromType == "external" or callToType == "external":
                 callHistoryExternal.append(callHistoryTmp)
-            else:
-                callHistoryUnknown.append(callHistoryTmp)
 
         if limit:
             callHistoryExternal = callHistoryExternal[:limit]
             callHistoryInternal = callHistoryInternal[:limit]
-        return callHistoryExternal, callHistoryInternal, callHistoryUnknown
+        return callHistoryExternal, callHistoryInternal
 
     def getCurrentStatus(self):
         currentCalls = []
