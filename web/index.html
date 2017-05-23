@@ -48,7 +48,7 @@
 					<button class="btn" id="internal">Show internal</button>
 					<button class="btn" id="external">Show external</button>
 					{% for item in external %}
-						<div class="hostdiv {% item['callFromType'] %}" style="background-color: {{ escape(item['callColor']) }};">
+						<div class="hostdiv {% escape(item['callFromType']) %}" style="background-color: {{ escape(item['callColor']) }};">
 							<div data-toggle="tooltip" title="{{ escape(item['callFrom']) }} -> {{ escape(item['callTo']) }}"
 								class="callfromto">{{ escape(item['callFromID']) }} &#8680 {{ escape(item['callToID']) }}</div>
 							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
