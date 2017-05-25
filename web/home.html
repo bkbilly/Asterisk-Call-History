@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ title }}</title>
+		<meta name="viewport" content="width=device-width">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="{{ static_url('icon.png') }}">
+
+
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<link rel="stylesheet" href="{{ static_url('main.css') }}">
+		<link rel="stylesheet" href="{{ static_url('mycss.css') }}">
+
+		<script type="text/javascript" src="{{ static_url('myjs.js') }}"></script>
+		
+	</head>
+
+	<body class="bg_japanesecube">
+		{% include "navbar.html" %}
+
+		<div class="panel-group col-xs-12 col-sm-6 col-md-6">
+			<div class="panel">
+				<div class="panel-heading">Connected Phones</div>
+				<div class="panel-body">
+					{% for item in peers %}
+						<div class="hostdiv">
+							<div class="callfromto">{{ escape(item['user']) }}</div>
+							<div class="callStatus">{{ escape(item['host']) }}</div><br>
+							<div class="callDate">{{ escape(item['port']) }}</div>
+							<div class="callDuration">{{ escape(str(item['status'])) }}</div>
+						</div>
+					{% end %}
+				</div>
+			</div>
+		</div>
+		<div class="panel-group col-xs-12 col-sm-6 col-md-6">
+			<div class="panel">
+				<div class="panel-heading">Current Calls</div>
+				<div class="panel-body">
+					{% for item in currentCalls %}
+					{% if item['Extension'] != "" %}
+						<div class="hostdiv">
+							<div class="callfromto">{{ escape(item['CallerID']) }} &#8680 {{ escape(item['Extension']) }}</div>
+							<div class="callStatus">{{ escape(item['Application']) }}</div><br>
+							<div class="callDate">{{ escape(item['State']) }}</div>
+							<div class="callDuration">{{ escape(str(item['Duration'])) }}</div>
+						</div>
+					{% end %}
+					{% end %}
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>

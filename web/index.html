@@ -22,6 +22,7 @@
 		<div>
 		
 			<!-- Nav tabs -->
+			{% include "navbar.html" %}
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
 				<li role="presentation"><a href="#external" aria-controls="external" role="tab" data-toggle="tab">External Calls</a></li>
@@ -32,23 +33,64 @@
 			<!-- Tab panes -->
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="home">
-					{% for item in currentCalls %}
-					{% if item['Extension'] != "" %}
-						<div class="hostdiv">
-							<div class="callfromto">{{ escape(item['CallerID']) }} &#8680 {{ escape(item['Extension']) }}</div>
-							<div class="callStatus">{{ escape(item['Application']) }}</div><br>
-							<div class="callDate">{{ escape(item['State']) }}</div>
-							<div class="callDuration">{{ escape(str(item['Duration'])) }}</div>
+					<div class="panel-group col-xs-12 col-sm-6 col-md-6">
+						<div class="panel">
+							<div class="panel-heading">Connected Phones</div>
+							<div class="panel-body">
+								{% for item in peers %}
+									<div class="hostdiv">
+										<div class="callfromto">{{ escape(item['user']) }}</div>
+										<div class="callStatus">{{ escape(item['host']) }}</div><br>
+										<div class="callDate">{{ escape(item['port']) }}</div>
+										<div class="callDuration">{{ escape(str(item['status'])) }}</div>
+									</div>
+								{% end %}
+							</div>
 						</div>
-					{% end %}
-					{% end %}
+					</div>
+					<div class="panel-group col-xs-12 col-sm-6 col-md-6">
+						<div class="panel">
+							<div class="panel-heading">Current Calls</div>
+							<div class="panel-body">
+								{% for item in currentCalls %}
+								{% if item['Extension'] != "" %}
+									<div class="hostdiv">
+										<div class="callfromto">{{ escape(item['CallerID']) }} &#8680 {{ escape(item['Extension']) }}</div>
+										<div class="callStatus">{{ escape(item['Application']) }}</div><br>
+										<div class="callDate">{{ escape(item['State']) }}</div>
+										<div class="callDuration">{{ escape(str(item['Duration'])) }}</div>
+									</div>
+								{% end %}
+								{% end %}
+								<div class="hostdiv">
+									<div class="callfromto">test &#8680 test2</div>
+									<div class="callStatus">application</div><br>
+									<div class="callDate">Date</div>
+									<div class="callDuration">00:00:30</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel-group col-xs-12 col-sm-6 col-md-6">
+						<div class="panel">
+							<div class="panel-heading">Contacts</div>
+							<div class="panel-body">
+								{% for item in contacts %}
+									<div class="hostdiv">
+										<div class="callfromto">{{ escape(contacts[item]) }}</div>
+										<div class="callStatus">{{ escape(item) }}</div><br>
+									</div>
+								{% end %}
+							</div>
+						</div>
+					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="external">
-					<button class="active btn" id="all">Show All</button>
-					<button class="btn" id="internal">Show internal</button>
-					<button class="btn" id="external">Show external</button>
+					<button class="btn btn-primary active" id="all">Show All</button>
+					<button class="btn btn-primary" id="fromexternal">Show external</button>
+					<button class="btn btn-primary" id="frominternal">Show internal</button>
 					{% for item in external %}
-						<div class="hostdiv {% escape(item['callFromType']) %}" style="background-color: {{ escape(item['callColor']) }};">
+						<div class="hostdiv from{{ escape(item['callFromType']) }}" style="background-color: {{ escape(item['callColor']) }};">
 							<div data-toggle="tooltip" title="{{ escape(item['callFrom']) }} -> {{ escape(item['callTo']) }}"
 								class="callfromto">{{ escape(item['callFromID']) }} &#8680 {{ escape(item['callToID']) }}</div>
 							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
@@ -66,7 +108,7 @@
 							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
 							<div class="callDate">{{ escape(item['callDate']) }}</div>
 							<div class="callDuration">{{ escape(str(item['callDuration'])) }}</div>
-							<!-- <div class="callResult">{{ escape(item['callResult']) }}</div> -->
+							<div class="callResult">{{ escape(item['callResult']) }}</div>
 						</div>
 					{% end %}
 				</div>
