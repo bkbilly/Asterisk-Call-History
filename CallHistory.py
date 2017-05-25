@@ -5,6 +5,8 @@ import json
 import csv
 import re
 import subprocess
+import collections
+import operator
 
 class AsteriskCallHistory():
     """docstring for AsteriskCallHistory"""
@@ -15,17 +17,16 @@ class AsteriskCallHistory():
         self.configuration = self.ReadConfig()
 
     def getCallHistory(self, limit):
+        self.contacts = self.readContacts()
         with open(self.configuration['options']['callDataFile'], 'rb') as f:
             reader = csv.reader(f)
             asteriskCalls = list(reader)
             asteriskCalls.reverse()  # Read log botton up
         #if limit:
         #    asteriskCalls = asteriskCalls[:limit]
-
-        self.allCallerIDs = self.getAllCallerIDs()
+        
         callHistoryExternal = []
         callHistoryInternal = []
-        callHistoryUnknown = []
 
         for callLog in asteriskCalls:
             callFromType = "unknown"
@@ -79,15 +80,14 @@ class AsteriskCallHistory():
                 callHistoryInternal.append(callHistoryTmp)
             elif callFromType == "external" or callToType == "external":
                 callHistoryExternal.append(callHistoryTmp)
-            else:
-                callHistoryUnknown.append(callHistoryTmp)
 
         if limit:
             callHistoryExternal = callHistoryExternal[:limit]
             callHistoryInternal = callHistoryInternal[:limit]
-        return callHistoryExternal, callHistoryInternal, callHistoryUnknown
+        return callHistoryExternal, callHistoryInternal
 
     def getCurrentStatus(self):
+        self.contacts = self.readContacts()
         currentCalls = []
         cmd = "asterisk -vvvvvrx 'core show channels concise'"
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
@@ -137,20 +137,56 @@ class AsteriskCallHistory():
                 inListType = False
         return inListType
 
-    def getAllCallerIDs(self):
-        allCallerIDs = {}
+    def getPeers(self):
+        peers = []
+        cmd = "asterisk -rx 'sip show peers'"
+        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        for row in out.split('\n'):
+            if len(row) >= 105:
+                user = row[0:25].strip()
+                host = row[25:65].strip()
+                port = row[84:93].strip()
+                status = row[93:105].strip()
+                peers.append({
+                    "user": row[0:25].strip(),
+                    "host": row[25:65].strip(),
+                    "port": row[84:93].strip(),
+                    "status": row[93:105].strip()
+                })
+        peers.pop(0)
+        return peers
+
+    def getContacts(self):
+        self.contacts = self.readContacts()
+        return self.contacts
+
+    def delContact(self, number):
+        cmd = "asterisk -rx 'database del cidname {number}'".format(number=number)
+        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        return "done"
+
+    def addContact(self, number, name):
+        cmd = "asterisk -rx 'database put cidname {number} \"{name}\"'".format(number=number, name=name)
+        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        return "done"
+
+    def readContacts(self):
+        contacts = {}
         cmd = "asterisk -rx 'database show cidname'"
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
         for row in out.split('\n'):
             m = re.search(r'/.+/([^\s]+)\s+:\s(.*)', row)
             if m:
-                allCallerIDs[m.group(1)] = m.group(2)
-        return allCallerIDs
+                number = m.group(1).strip()
+                name = m.group(2).strip()
+                contacts[number] = name
+        oContacts = collections.OrderedDict(sorted(contacts.items(), key=operator.itemgetter(1)))
+        return oContacts
 
     def getCallerID(self, number):
         callerID = number
-        if number in self.allCallerIDs:
-            callerID = self.allCallerIDs[number]
+        if number in self.contacts:
+            callerID = self.contacts[number]
 
         return callerID
 

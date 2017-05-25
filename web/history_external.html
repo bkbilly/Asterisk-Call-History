@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ title }}</title>
+		<meta name="viewport" content="width=device-width">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="{{ static_url('icon.png') }}">
+
+
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<link rel="stylesheet" href="{{ static_url('main.css') }}">
+		<link rel="stylesheet" href="{{ static_url('mycss.css') }}">
+
+		<script type="text/javascript" src="{{ static_url('myjs.js') }}"></script>
+		
+	</head>
+
+	<body class="bg_japanesecube">
+		{% include "navbar.html" %}
+
+		<div class="panel-group col-xs-12 col-sm-12 col-md-12">
+			<div class="panel">
+				<div class="panel-heading">History External</div>
+				<div class="panel-body" id="external">
+					<button class="btn btn-primary active" id="all">Show All</button>
+					<button class="btn btn-primary" id="fromexternal">Show external</button>
+					<button class="btn btn-primary" id="frominternal">Show internal</button>
+					{% for item in external %}
+						<div class="hostdiv from{{ escape(item['callFromType']) }}" style="background-color: {{ escape(item['callColor']) }};">
+							<div data-toggle="tooltip" title="{{ escape(item['callFrom']) }} -> {{ escape(item['callTo']) }}"
+								class="callfromto">{{ escape(item['callFromID']) }} &#8680 {{ escape(item['callToID']) }}</div>
+							<div class="callStatus">{{ escape(item['callStatus']) }}</div><br>
+							<div class="callDate">{{ escape(item['callDate']) }}</div>
+							<div class="callDuration">{{ escape(str(item['callDuration'])) }}</div>
+							<div class="callResult">{{ escape(item['callResult']) }}</div>
+						</div>
+					{% end %}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

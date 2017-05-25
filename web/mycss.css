@@ -1,3 +1,34 @@
+.red {
+	color: red;
+}
+
+.panel-group {
+	/*margin: 20px;*/
+}
+.panel-heading {
+	color: #31708f;
+	color: #FFF;
+	background-color: #555;
+}
+.panel-body {
+	background-color:rgba(0, 0, 0, 0.6);
+}
+.panel {
+	border: 0px solid transparent;
+	background-color:rgba(0,0,0,0);
+}
+
+.dropdown-menu { background-color: #222}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-menu > .active > a:hover { background-color: #000}
+.dropdown-menu>li>a { color: #999}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus { color: #fff}
+.dropdown-menu>.divider { background-color: #000}
+
+@media (min-width: 768px) {
+	li.dropdown:hover > .dropdown-menu {
+	    display: block;
+	}
+}
 
 .nav-tabs{
 	background-color: #555;
