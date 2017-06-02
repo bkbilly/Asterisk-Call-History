@@ -50,11 +50,28 @@ function delContact(number){
 function addBlockedContact(){
 	senddata = {
 		"method": "new",
-		"blcnt_number": $("#blcnt_number").val()
+		"cnt_name": $("#cnt_name").val(),
+		"cnt_number": $("#cnt_number").val()
 	}
 	console.log(senddata)
 	$.post("blockedcontacts.html", senddata, function(data){
 		console.log(data);
-		location.reload();
+		if (data.error == false)
+			location.reload();
 	});
 }
+function delBlockedContact(number){
+	senddata = {
+		"method": "del",
+		"cnt_number": number
+	}
+	console.log(senddata)
+	if (confirm('Are you sure you want to delete this number?')) {
+		$.post("blockedcontacts.html", senddata, function(data){
+			console.log(data);
+			if (data.error == false)
+				location.reload();
+		});
+	}
+}
+

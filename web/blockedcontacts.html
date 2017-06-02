@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ title }}</title>
+		<meta name="viewport" content="width=device-width">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="{{ static_url('icon.png') }}">
+
+
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<link rel="stylesheet" href="{{ static_url('main.css') }}">
+		<link rel="stylesheet" href="{{ static_url('mycss.css') }}">
+
+		<script type="text/javascript" src="{{ static_url('myjs.js') }}"></script>
+		
+	</head>
+
+	<body class="bg_japanesecube">
+		{% include "navbar.html" %}
+
+		<div class="panel-group col-xs-12 col-sm-12 col-md-12">
+			<div class="panel">
+				<div class="panel-heading">Add Contact</div>
+				<div class="panel-body">
+					<form class="form-inline" onsubmit="addBlockedContact();return false;" style="text-align: center;">
+						<div class="form-group">
+							<label for="cnt_name">Name:</label>
+							<input type="text" class="form-control" id="cnt_name" placeholder="Enter name" name="cnt_name">
+						</div>
+						<div class="form-group">
+							<label for="cnt_number">Number:</label>
+							<input type="text" class="form-control" id="cnt_number" placeholder="Enter number" name="cnt_number">
+						</div>
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="panel-group col-xs-12 col-sm-12 col-md-12">
+			<div class="panel">
+				<div class="panel-heading">Contacts</div>
+				<div class="panel-body">
+					{% for item in contacts %}
+						<div class="hostdiv">
+							<div class="callfromto">{{ escape(contacts[item]) }}</div>
+							<div class="callStatus">{{ escape(item) }}
+								<a href="javascript: delBlockedContact('{{ escape(item) }}')"><span class="glyphicon glyphicon-remove red"></span></a>
+							</div><br>
+						</div>
+					{% end %}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

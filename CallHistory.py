@@ -17,7 +17,7 @@ class AsteriskCallHistory():
         self.configuration = self.ReadConfig()
 
     def getCallHistory(self, limit):
-        self.contacts = self.readContacts()
+        self.contacts = self.readContacts('cidname')
         with open(self.configuration['options']['callDataFile'], 'rb') as f:
             reader = csv.reader(f)
             asteriskCalls = list(reader)
@@ -87,7 +87,7 @@ class AsteriskCallHistory():
         return callHistoryExternal, callHistoryInternal
 
     def getCurrentStatus(self):
-        self.contacts = self.readContacts()
+        self.contacts = self.readContacts('cidname')
         currentCalls = []
         cmd = "asterisk -vvvvvrx 'core show channels concise'"
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
@@ -156,23 +156,23 @@ class AsteriskCallHistory():
         peers.pop(0)
         return peers
 
-    def getContacts(self):
-        self.contacts = self.readContacts()
+    def getContacts(self, table):
+        self.contacts = self.readContacts(table)
         return self.contacts
 
-    def delContact(self, number):
-        cmd = "asterisk -rx 'database del cidname {number}'".format(number=number)
+    def delContact(self, table, number):
+        cmd = "asterisk -rx 'database del {table} {number}'".format(table=table, number=number)
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
         return "done"
 
-    def addContact(self, number, name):
-        cmd = "asterisk -rx 'database put cidname {number} \"{name}\"'".format(number=number, name=name)
+    def addContact(self, table, number, name):
+        cmd = "asterisk -rx 'database put {table} {number} \"{name}\"'".format(table=table, number=number, name=name)
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
         return "done"
 
-    def readContacts(self):
+    def readContacts(self, table):
         contacts = {}
-        cmd = "asterisk -rx 'database show cidname'"
+        cmd = "asterisk -rx 'database show {table}'".format(table=table)
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
         for row in out.split('\n'):
             m = re.search(r'/.+/([^\s]+)\s+:\s(.*)', row)

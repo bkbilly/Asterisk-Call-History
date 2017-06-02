@@ -11,7 +11,7 @@ class MainHandler(tornado.web.RequestHandler):
         historyExternal, historyInternal = callhistory.getCallHistory(int(100))
         currentCalls = callhistory.getCurrentStatus()
         peers = callhistory.getPeers()
-        contacts = callhistory.getContacts()
+        contacts = callhistory.getContacts('cidname')
         self.render("index.html",
                     title="Call History",
                     external=historyExternal,
@@ -24,7 +24,7 @@ class HomeHandler(tornado.web.RequestHandler):
     def get(self):
         currentCalls = callhistory.getCurrentStatus()
         peers = callhistory.getPeers()
-        contacts = callhistory.getContacts()
+        contacts = callhistory.getContacts('cidname')
         self.render("home.html",
                     title="Call History",
                     currentCalls=currentCalls,
@@ -32,12 +32,14 @@ class HomeHandler(tornado.web.RequestHandler):
 
 class ContactsHandler(tornado.web.RequestHandler):
     def get(self):
-        contacts = callhistory.getContacts()
+        dbtable = 'cidname'
+        contacts = callhistory.getContacts(dbtable)
         self.render("contacts.html",
                     title="Call History",
                     contacts=contacts)
 
     def post(self):
+        dbtable = 'cidname'
         method = self.get_argument('method', '')
         if method == 'new':
             name = self.get_argument('cnt_name', '')
@@ -53,7 +55,7 @@ class ContactsHandler(tornado.web.RequestHandler):
                     'msg': 'Please enter a number.'
                 }
             else:
-                msg = callhistory.addContact(number, name)
+                msg = callhistory.addContact(dbtable, number, name)
                 login_response = {
                     'error': False, 
                     'msg': msg
@@ -67,7 +69,7 @@ class ContactsHandler(tornado.web.RequestHandler):
                     'msg': 'Please enter a number.'
                 }
             else:
-                msg = callhistory.delContact(number)
+                msg = callhistory.delContact(dbtable, number)
                 login_response = {
                     'error': False, 
                     'msg': 'Thank You.'
@@ -81,22 +83,52 @@ class ContactsHandler(tornado.web.RequestHandler):
 
 class BlockedContactsHandler(tornado.web.RequestHandler):
     def get(self):
-        contacts = callhistory.getContacts()
+        dbtable = 'blockcaller'
+        contacts = callhistory.getContacts(dbtable)
         self.render("blockedcontacts.html",
                     title="Call History",
                     contacts=contacts)
 
     def post(self):
-        number = self.get_argument('blcnt_number', '')
-        if not number:
-            login_response = {
-                'error': True, 
-                'msg': 'Please enter a number.'
-            }
+        dbtable = 'blockcaller'
+        method = self.get_argument('method', '')
+        if method == 'new':
+            name = self.get_argument('cnt_name', '')
+            number = self.get_argument('cnt_number', '')
+            if not name:
+                login_response = {
+                    'error': True, 
+                    'msg': 'Please enter a name.'
+                }
+            elif not number:
+                login_response = {
+                    'error': True, 
+                    'msg': 'Please enter a number.'
+                }
+            else:
+                msg = callhistory.addContact(dbtable, number, name)
+                login_response = {
+                    'error': False, 
+                    'msg': msg
+                }
+        elif method == 'del':
+            number = self.get_argument('cnt_number', '')
+            print "del:", number
+            if not number:
+                login_response = {
+                    'error': True, 
+                    'msg': 'Please enter a number.'
+                }
+            else:
+                msg = callhistory.delContact(dbtable, number)
+                login_response = {
+                    'error': False, 
+                    'msg': 'Thank You.'
+                }
         else:
             login_response = {
                 'error': True, 
-                'msg': 'not supported.'
+                'msg': 'Not supported.'
             }
         self.write(login_response)
 
