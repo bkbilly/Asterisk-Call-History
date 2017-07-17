@@ -15,6 +15,7 @@ class AsteriskCallHistory():
         # Global Variables
         self.configfile = configfile
         self.configuration = self.ReadConfig()
+        self.timezone = 3
 
     def getCallHistory(self, limit):
         self.contacts = self.readContacts('cidname')
@@ -34,19 +35,38 @@ class AsteriskCallHistory():
             log_from = callLog[1]
             log_to = callLog[2]
             log_time = callLog[9]
+            log_time = datetime.datetime.strptime(callLog[9], '%Y-%m-%d %H:%M:%S') # change it!
+            log_time += datetime.timedelta(hours=self.timezone)
+            log_time = log_time.strftime("%H:%M:%S %d-%m-%Y")
             log_duration = str(datetime.timedelta(seconds=int(callLog[13])))
             log_callStatus = callLog[14]
             log_result = callLog[7] + ' ' + callLog[8]
-
-            if self.isInListType(log_from, self.configuration['options']['internalNumbers']):
-                callFromType = "internal"
-            else:
-                callFromType = "external"
 
             if self.isInListType(log_to, self.configuration['options']['internalNumbers']):
                 callToType = "internal"
             else:
                 callToType = "external"
+
+            if self.isInListType(log_from, self.configuration['options']['internalNumbers']):
+                callFromType = "internal"
+            else:
+                callFromType = "external"
+                if "Dial" in log_result:
+                    log_result = ''
+                elif "VoiceMail" in log_result:
+                    log_callStatus = 'VOICEMAIL'
+                    log_result = ''
+                elif "Hangup" in log_result:
+                    log_callStatus = 'HANGUP'
+                    log_result = ''
+                elif "telemarket" in log_result:
+                    log_callStatus = 'BLOCKED'
+                    log_result = ''
+                elif "WaitExten" in log_result:
+                    log_callStatus = 'BLOCKED'
+                    log_result = ''
+                else:
+                    log_callStatus = 'Unknown'
 
             log_from_id = self.getCallerID(log_from)
             log_to_id = self.getCallerID(log_to)
@@ -59,6 +79,12 @@ class AsteriskCallHistory():
                 callStatusColor = "#122"
             elif log_callStatus == "FAILED":
                 callStatusColor = "#330000"
+            elif log_callStatus == "HANGUP":
+                callStatusColor = "#200"
+            elif log_callStatus == "VOICEMAIL":
+                callStatusColor = "#060"
+            elif log_callStatus == "BLOCKED":
+                callStatusColor = "#004"
             else:
                 callStatusColor = ""
 
