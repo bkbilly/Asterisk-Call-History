@@ -51,22 +51,26 @@ class AsteriskCallHistory():
                 callFromType = "internal"
             else:
                 callFromType = "external"
-                if "Dial" in log_result:
-                    log_result = ''
-                elif "VoiceMail" in log_result:
-                    log_callStatus = 'VOICEMAIL'
-                    log_result = ''
-                elif "Hangup" in log_result:
-                    log_callStatus = 'HANGUP'
-                    log_result = ''
-                elif "telemarket" in log_result:
-                    log_callStatus = 'BLOCKED'
-                    log_result = ''
-                elif "WaitExten" in log_result:
-                    log_callStatus = 'BLOCKED'
-                    log_result = ''
-                else:
-                    log_callStatus = 'Unknown'
+
+            if "Dial" in log_result:
+                log_result = ''
+            elif "VoiceMail" in log_result:
+                log_callStatus = 'VOICEMAIL'
+                log_result = ''
+            elif "Hangup" in log_result:
+                log_callStatus = 'HANGUP'
+                log_result = ''
+            elif "hangup" in log_result:
+                log_callStatus = 'HANGUP'
+                log_result = ''
+            elif "telemarket" in log_result:
+                log_callStatus = 'BLOCKED'
+                log_result = ''
+            elif "WaitExten" in log_result:
+                log_callStatus = 'BLOCKED'
+                log_result = ''
+            else:
+                log_callStatus = 'Unknown'
 
             log_from_id = self.getCallerID(log_from)
             log_to_id = self.getCallerID(log_to)
