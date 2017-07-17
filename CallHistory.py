@@ -167,16 +167,29 @@ class AsteriskCallHistory():
                 inListType = False
         return inListType
 
+    def getVoiceMails(self):
+        mailboxes = []
+        cmd = "asterisk -rx 'voicemail show users'"
+        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        for row in out.split('\n'):
+            if len(row) >= 55:
+                mailboxes.append({
+                    "context": row[0:10].strip(),
+                    "mbox": row[10:16].strip(),
+                    "user": row[16:42].strip(),
+                    "zone": row[42:53].strip(),
+                    "newMsg": row[53:].strip()
+                })
+        mailboxes.pop(0)
+        mailboxes.pop(-1)
+        return mailboxes
+
     def getPeers(self):
         peers = []
         cmd = "asterisk -rx 'sip show peers'"
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
         for row in out.split('\n'):
             if len(row) >= 105:
-                user = row[0:25].strip()
-                host = row[25:65].strip()
-                port = row[84:93].strip()
-                status = row[93:105].strip()
                 peers.append({
                     "user": row[0:25].strip(),
                     "host": row[25:65].strip(),

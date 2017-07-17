@@ -54,6 +54,19 @@
 				</div>
 			</div>
 		</div>
+		<div class="panel-group col-xs-12 col-sm-6 col-md-6">
+			<div class="panel">
+				<div class="panel-heading">Mail Boxes</div>
+				<div class="panel-body">
+					{% for item in mboxes %}
+						<div class="hostdiv">
+							<div class="callfromto">{{ escape(item['user']) }}</div>
+							<div class="callStatus">{{ escape(item['newMsg']) }}</div><br>
+						</div>
+					{% end %}
+				</div>
+			</div>
+		</div>
 
 	</body>
 </html>

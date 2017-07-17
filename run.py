@@ -6,29 +6,17 @@ import os
 from CallHistory import AsteriskCallHistory
 
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        historyExternal, historyInternal = callhistory.getCallHistory(int(100))
-        currentCalls = callhistory.getCurrentStatus()
-        peers = callhistory.getPeers()
-        contacts = callhistory.getContacts('cidname')
-        self.render("index.html",
-                    title="Call History",
-                    external=historyExternal,
-                    internal=historyInternal,
-                    currentCalls=currentCalls,
-                    peers=peers,
-                    contacts=contacts)
-
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):
         currentCalls = callhistory.getCurrentStatus()
         peers = callhistory.getPeers()
+        mboxes = callhistory.getVoiceMails()
         contacts = callhistory.getContacts('cidname')
         self.render("home.html",
                     title="Call History",
                     currentCalls=currentCalls,
-                    peers=peers)
+                    peers=peers,
+                    mboxes=mboxes)
 
 class ContactsHandler(tornado.web.RequestHandler):
     def get(self):
