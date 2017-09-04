@@ -1,4 +1,4 @@
-# Network Scanner
+# Asterisk Call History
 
 This application shows the call history of all calls from asterisk server (Master.csv).
 
