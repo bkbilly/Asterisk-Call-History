@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 import datetime
 import json
 
@@ -7,6 +8,7 @@ import re
 import subprocess
 import collections
 import operator
+
 
 class AsteriskCallHistory():
     """docstring for AsteriskCallHistory"""
@@ -19,13 +21,13 @@ class AsteriskCallHistory():
 
     def getCallHistory(self, limit):
         self.contacts = self.readContacts('cidname')
-        with open(self.configuration['options']['callDataFile'], 'rb') as f:
+        with open(self.configuration['options']['callDataFile'], newline='') as f:
             reader = csv.reader(f)
             asteriskCalls = list(reader)
             asteriskCalls.reverse()  # Read log botton up
-        #if limit:
+        # if limit:
         #    asteriskCalls = asteriskCalls[:limit]
-        
+
         callHistoryExternal = []
         callHistoryInternal = []
 
@@ -35,7 +37,7 @@ class AsteriskCallHistory():
             log_from = callLog[1]
             log_to = callLog[2]
             log_time = callLog[9]
-            log_time = datetime.datetime.strptime(callLog[9], '%Y-%m-%d %H:%M:%S') # change it!
+            log_time = datetime.datetime.strptime(callLog[9], '%Y-%m-%d %H:%M:%S')  # change it!
             log_time += datetime.timedelta(hours=self.timezone)
             log_time = log_time.strftime("%H:%M:%S %d-%m-%Y")
             log_duration = str(datetime.timedelta(seconds=int(callLog[13])))
@@ -120,7 +122,7 @@ class AsteriskCallHistory():
         self.contacts = self.readContacts('cidname')
         currentCalls = []
         cmd = "asterisk -vvvvvrx 'core show channels concise'"
-        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        out = subprocess.getoutput(cmd)
         for row in out.split('\n'):
             m = re.search(r'(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)!(.*)$', row)
             if m:
@@ -170,7 +172,7 @@ class AsteriskCallHistory():
     def getVoiceMails(self):
         mailboxes = []
         cmd = "asterisk -rx 'voicemail show users'"
-        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        out = subprocess.getoutput(cmd)
         for row in out.split('\n'):
             if len(row) >= 55:
                 mailboxes.append({
@@ -187,7 +189,7 @@ class AsteriskCallHistory():
     def getPeers(self):
         peers = []
         cmd = "asterisk -rx 'sip show peers'"
-        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        out = subprocess.getoutput(cmd)
         for row in out.split('\n'):
             if len(row) >= 105:
                 peers.append({
@@ -205,18 +207,18 @@ class AsteriskCallHistory():
 
     def delContact(self, table, number):
         cmd = "asterisk -rx 'database del {table} {number}'".format(table=table, number=number)
-        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        out = subprocess.getoutput(cmd)
         return "done"
 
     def addContact(self, table, number, name):
         cmd = "asterisk -rx 'database put {table} {number} \"{name}\"'".format(table=table, number=number, name=name)
-        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        out = subprocess.getoutput(cmd)
         return "done"
 
     def readContacts(self, table):
         contacts = {}
         cmd = "asterisk -rx 'database show {table}'".format(table=table)
-        out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()
+        out = subprocess.getoutput(cmd)
         for row in out.split('\n'):
             m = re.search(r'/.+/([^\s]+)\s+:\s(.*)', row)
             if m:
@@ -232,4 +234,3 @@ class AsteriskCallHistory():
             callerID = self.contacts[number]
 
         return callerID
-

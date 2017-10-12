@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import tornado.ioloop
 import tornado.web
@@ -18,6 +18,7 @@ class HomeHandler(tornado.web.RequestHandler):
                     peers=peers,
                     mboxes=mboxes)
 
+
 class ContactsHandler(tornado.web.RequestHandler):
     def get(self):
         dbtable = 'cidname'
@@ -34,40 +35,41 @@ class ContactsHandler(tornado.web.RequestHandler):
             number = self.get_argument('cnt_number', '')
             if not name:
                 login_response = {
-                    'error': True, 
+                    'error': True,
                     'msg': 'Please enter a name.'
                 }
             elif not number:
                 login_response = {
-                    'error': True, 
+                    'error': True,
                     'msg': 'Please enter a number.'
                 }
             else:
                 msg = callhistory.addContact(dbtable, number, name)
                 login_response = {
-                    'error': False, 
+                    'error': False,
                     'msg': msg
                 }
         elif method == 'del':
             number = self.get_argument('cnt_number', '')
-            print "del:", number
+            print("del:", number)
             if not number:
                 login_response = {
-                    'error': True, 
+                    'error': True,
                     'msg': 'Please enter a number.'
                 }
             else:
                 msg = callhistory.delContact(dbtable, number)
                 login_response = {
-                    'error': False, 
+                    'error': False,
                     'msg': 'Thank You.'
                 }
         else:
             login_response = {
-                'error': True, 
+                'error': True,
                 'msg': 'Not supported.'
             }
         self.write(login_response)
+
 
 class BlockedContactsHandler(tornado.web.RequestHandler):
     def get(self):
@@ -85,37 +87,37 @@ class BlockedContactsHandler(tornado.web.RequestHandler):
             number = self.get_argument('cnt_number', '')
             if not name:
                 login_response = {
-                    'error': True, 
+                    'error': True,
                     'msg': 'Please enter a name.'
                 }
             elif not number:
                 login_response = {
-                    'error': True, 
+                    'error': True,
                     'msg': 'Please enter a number.'
                 }
             else:
                 msg = callhistory.addContact(dbtable, number, name)
                 login_response = {
-                    'error': False, 
+                    'error': False,
                     'msg': msg
                 }
         elif method == 'del':
             number = self.get_argument('cnt_number', '')
-            print "del:", number
+            print("del:", number)
             if not number:
                 login_response = {
-                    'error': True, 
+                    'error': True,
                     'msg': 'Please enter a number.'
                 }
             else:
                 msg = callhistory.delContact(dbtable, number)
                 login_response = {
-                    'error': False, 
+                    'error': False,
                     'msg': 'Thank You.'
                 }
         else:
             login_response = {
-                'error': True, 
+                'error': True,
                 'msg': 'Not supported.'
             }
         self.write(login_response)
@@ -128,12 +130,14 @@ class HistoryExternalHandler(tornado.web.RequestHandler):
                     title="Call History",
                     external=historyExternal)
 
+
 class HistoryInternalHandler(tornado.web.RequestHandler):
     def get(self):
         historyExternal, historyInternal = callhistory.getCallHistory(int(100))
         self.render("history_internal.html",
                     title="Call History",
                     internal=historyInternal)
+
 
 def make_app():
     settings = {
