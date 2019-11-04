@@ -13,7 +13,7 @@
 
 NAME="asteriskcallhistory"
 PIDFILE='/var/run/asteriskcallhistory/asteriskcallhistory.pid'
-DAEMON='/usr/bin/python /opt/Asterisk-Call-History/run.py'
+DAEMON='/usr/bin/python3 /opt/Asterisk-Call-History/run.py'
 CONFIG='$PIDFILE'
 DAEMON_UID='root'
 DAEMON_GID='root'

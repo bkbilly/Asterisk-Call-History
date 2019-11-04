@@ -1,5 +1,7 @@
 {
     "options": {
+        "cert": "",
+        "key": "",
         "callDataFile": "/var/log/asterisk/cdr-csv/Master.csv",
         "internalNumbers": [
             "123",

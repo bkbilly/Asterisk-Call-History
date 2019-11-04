@@ -8,6 +8,7 @@ cd /opt/
 sudo git clone https://github.com/bkbilly/Asterisk-Call-History.git
 cd /opt/Asterisk-Call-History/
 sudo pip install -r /opt/Asterisk-Call-History/requirements.txt
+sudo cp /opt/Asterisk-Call-History/configuration_template.json /opt/Asterisk-Call-History/configuration.json
 sudo chmod +x /opt/Asterisk-Call-History/asteriskcallhistory
 sudo ln -s /opt/Asterisk-Call-History/asteriskcallhistory /etc/init.d/asteriskcallhistory
 sudo update-rc.d asteriskcallhistory defaults

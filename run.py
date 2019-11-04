@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
+import json
 import tornado.ioloop
 import tornado.web
+import tornado.httpserver
 import os
+import ssl
 from CallHistory import AsteriskCallHistory
 
 
@@ -44,6 +47,7 @@ class ContactsHandler(tornado.web.RequestHandler):
                     'msg': 'Please enter a number.'
                 }
             else:
+                print("add:", number, name)
                 msg = callhistory.addContact(dbtable, number, name)
                 login_response = {
                     'error': False,
@@ -125,7 +129,9 @@ class BlockedContactsHandler(tornado.web.RequestHandler):
 
 class HistoryExternalHandler(tornado.web.RequestHandler):
     def get(self):
-        historyExternal, historyInternal = callhistory.getCallHistory(int(100))
+        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(100))
+        #print(historyExternal)
+        #print(historyInternal)
         self.render("history_external.html",
                     title="Call History",
                     external=historyExternal)
@@ -133,35 +139,56 @@ class HistoryExternalHandler(tornado.web.RequestHandler):
 
 class HistoryInternalHandler(tornado.web.RequestHandler):
     def get(self):
-        historyExternal, historyInternal = callhistory.getCallHistory(int(100))
+        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(100))
         self.render("history_internal.html",
                     title="Call History",
                     internal=historyInternal)
 
 
-def make_app():
+class HistoryHandler(tornado.web.RequestHandler):
+    def get(self):
+        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(100))
+        self.render("history.html",
+                    title="Call History",
+                    historyall=historyInternal)
+
+
+def make_app(cert, key):
     settings = {
         "debug": True,
         "template_path": webDirectory,
         "static_path": webDirectory
     }
 
-    return tornado.web.Application([
+    application = tornado.web.Application([
         (r"/", HomeHandler),
         (r"/home.html", HomeHandler),
         (r"/contacts.html", ContactsHandler),
         (r"/blockedcontacts.html", BlockedContactsHandler),
         (r"/history_external.html", HistoryExternalHandler),
-        (r"/history_internal.html", HistoryInternalHandler)
+        (r"/history_internal.html", HistoryInternalHandler),
+        (r"/history.html", HistoryHandler)
     ], **settings)
+    http_server = tornado.httpserver.HTTPServer(application,
+        ssl_options={
+            "certfile": cert,
+            "keyfile": key
+        }
+    )
+
+    return http_server
+
 
 
 if __name__ == "__main__":
     wd = os.path.dirname(os.path.realpath(__file__))
     webDirectory = os.path.join(wd, 'web')
     configfile = os.path.join(wd, "configuration.json")
-    callhistory = AsteriskCallHistory(configfile)
+    with open(configfile) as data_file:
+        configuration = json.load(data_file)
 
-    app = make_app()
+    callhistory = AsteriskCallHistory(configuration)
+
+    app = make_app(configuration['options']['cert'], configuration['options']['key'])
     app.listen(5002)
     tornado.ioloop.IOLoop.current().start()

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import datetime
-import json
 
 import csv
 import re
@@ -15,8 +14,7 @@ class AsteriskCallHistory():
 
     def __init__(self, configfile):
         # Global Variables
-        self.configfile = configfile
-        self.configuration = self.ReadConfig()
+        self.configuration = configfile
         self.timezone = 3
 
     def getCallHistory(self, limit):
@@ -28,14 +26,21 @@ class AsteriskCallHistory():
         # if limit:
         #    asteriskCalls = asteriskCalls[:limit]
 
+        callHistory = []
         callHistoryExternal = []
         callHistoryInternal = []
 
         for callLog in asteriskCalls:
             callFromType = "unknown"
             callToType = "unknown"
+            accountcode = callLog[0]
             log_from = callLog[1]
             log_to = callLog[2]
+            log_dcontext = callLog[3]
+            log_callerid = next(iter(re.findall(r'\"(.*)\"', callLog[4])), '')
+            log_channel = re.findall(r'.*\/([1-9A-z_\s]+)-*.*', callLog[5])[0]
+            log_dstchannel = callLog[5]
+            log_function = '{0}({1})'.format(callLog[7], callLog[8])
             log_time = callLog[9]
             log_time = datetime.datetime.strptime(callLog[9], '%Y-%m-%d %H:%M:%S')  # change it!
             log_time += datetime.timedelta(hours=self.timezone)
@@ -56,13 +61,13 @@ class AsteriskCallHistory():
 
             if "Dial" in log_result:
                 log_result = ''
+            elif "block" in log_dcontext.lower():
+                log_callStatus = 'BLOCKED'
+                log_result = ''
             elif "VoiceMail" in log_result:
                 log_callStatus = 'VOICEMAIL'
                 log_result = ''
-            elif "Hangup" in log_result:
-                log_callStatus = 'HANGUP'
-                log_result = ''
-            elif "hangup" in log_result:
+            elif "hangup" in log_result.lower():
                 log_callStatus = 'HANGUP'
                 log_result = ''
             elif "telemarket" in log_result:
@@ -94,19 +99,30 @@ class AsteriskCallHistory():
             else:
                 callStatusColor = ""
 
+            if callFromType == "internal" and callToType == "internal":
+                callType = "internal"
+            elif callFromType == "external" or callToType == "external":
+                callType = "external"
+
             callHistoryTmp = ({
                 "callFrom": log_from,
                 "callFromID": log_from_id,
+                "callCallerID": log_callerid,
                 "callFromType": callFromType,
                 "callTo": log_to,
                 "callToID": log_to_id,
                 "callToType": callToType,
                 "callDuration": log_duration,
                 "callDate": log_time,
+                "callFunction": log_function,
+                "callChannel": log_channel,
                 "callStatus": log_callStatus,
                 "callResult": log_result,
-                "callColor": callStatusColor
+                "callColor": callStatusColor,
+                "callType": callType,
             })
+
+            callHistory.append(callHistoryTmp)
 
             if callFromType == "internal" and callToType == "internal":
                 callHistoryInternal.append(callHistoryTmp)
@@ -116,7 +132,7 @@ class AsteriskCallHistory():
         if limit:
             callHistoryExternal = callHistoryExternal[:limit]
             callHistoryInternal = callHistoryInternal[:limit]
-        return callHistoryExternal, callHistoryInternal
+        return callHistoryExternal, callHistoryInternal, callHistoryTmp
 
     def getCurrentStatus(self):
         self.contacts = self.readContacts('cidname')
@@ -145,11 +161,6 @@ class AsteriskCallHistory():
                     "????": m.group(14)
                 })
         return currentCalls
-
-    def ReadConfig(self):
-        with open(self.configfile) as data_file:
-            configuration = json.load(data_file)
-        return configuration
 
     def isInListType(self, numberToCheck, listCallRegExp):
         inListType = False
@@ -234,3 +245,4 @@ class AsteriskCallHistory():
             callerID = self.contacts[number]
 
         return callerID
+

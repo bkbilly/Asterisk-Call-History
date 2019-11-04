@@ -10,6 +10,7 @@ $( document ).ready(function() {
       console.log("show all");
     } else {
       var $el = $('.' + this.id).fadeIn(450);
+      console.log($el)
       $('#external > div').not($el).hide();
       console.log("rm some");
     }
@@ -75,3 +76,5 @@ function delBlockedContact(number){
 	}
 }
 
+
+// var tf1 = setFilterGrid("table1");
