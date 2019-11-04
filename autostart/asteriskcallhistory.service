@@ -1,0 +1,12 @@
+[Unit]
+Description=Asterisk Call History
+After=network-online.target
+ 
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /opt/Asterisk-Call-History/run.py
+ 
+[Install]
+WantedBy=multi-user.target
+

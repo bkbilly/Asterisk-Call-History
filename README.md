@@ -4,14 +4,13 @@ This application shows the call history of all calls from asterisk server (Maste
 
 ## Installation
 ```
-cd /opt/
-sudo git clone https://github.com/bkbilly/Asterisk-Call-History.git
-cd /opt/Asterisk-Call-History/
+sudo git clone https://github.com/bkbilly/Asterisk-Call-History.git /opt/Asterisk-Call-History
 sudo pip install -r /opt/Asterisk-Call-History/requirements.txt
 sudo cp /opt/Asterisk-Call-History/configuration_template.json /opt/Asterisk-Call-History/configuration.json
-sudo chmod +x /opt/Asterisk-Call-History/asteriskcallhistory
-sudo ln -s /opt/Asterisk-Call-History/asteriskcallhistory /etc/init.d/asteriskcallhistory
-sudo update-rc.d asteriskcallhistory defaults
+
+sudo cp /opt/Asterisk-Call-History/autostart/asteriskcallhistory.service /etc/systemd/system/asteriskcallhistory.service
+sudo chmod +x /etc/systemd/system/asteriskcallhistory.service
+sudo systemctl enable asteriskcallhistory
 sudo service asteriskcallhistory start
 ```
 
