@@ -122,6 +122,9 @@ class AsteriskCallHistory():
                 "callType": callType,
             })
 
+            if len(callHistory) > 1:
+                if callHistory[-1]['callDate'] == callHistoryTmp['callDate']:
+                    callHistory.pop()
             callHistory.append(callHistoryTmp)
 
             if callFromType == "internal" and callToType == "internal":
@@ -194,7 +197,6 @@ class AsteriskCallHistory():
                     "newMsg": row[53:].strip()
                 })
         mailboxes.pop(0)
-        mailboxes.pop(-1)
         return mailboxes
 
     def getPeers(self):

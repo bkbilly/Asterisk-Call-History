@@ -129,7 +129,7 @@ class BlockedContactsHandler(tornado.web.RequestHandler):
 
 class HistoryExternalHandler(tornado.web.RequestHandler):
     def get(self):
-        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(100))
+        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(1000))
         #print(historyExternal)
         #print(historyInternal)
         self.render("history_external.html",
@@ -139,7 +139,7 @@ class HistoryExternalHandler(tornado.web.RequestHandler):
 
 class HistoryInternalHandler(tornado.web.RequestHandler):
     def get(self):
-        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(100))
+        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(1000))
         self.render("history_internal.html",
                     title="Call History",
                     internal=historyInternal)
@@ -147,7 +147,7 @@ class HistoryInternalHandler(tornado.web.RequestHandler):
 
 class HistoryHandler(tornado.web.RequestHandler):
     def get(self):
-        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(100))
+        historyExternal, historyInternal, historyAll = callhistory.getCallHistory(int(1000))
         self.render("history.html",
                     title="Call History",
                     historyall=historyInternal)
