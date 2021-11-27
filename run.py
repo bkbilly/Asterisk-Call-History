@@ -169,12 +169,15 @@ def make_app(cert, key):
         (r"/history_internal.html", HistoryInternalHandler),
         (r"/history.html", HistoryHandler)
     ], **settings)
-    http_server = tornado.httpserver.HTTPServer(application,
-        ssl_options={
-            "certfile": cert,
-            "keyfile": key
-        }
-    )
+    if cert is not None and key is not None:
+        http_server = tornado.httpserver.HTTPServer(application,
+            ssl_options={
+                "certfile": cert,
+                "keyfile": key
+            }
+        )
+    else:
+        http_server = tornado.httpserver.HTTPServer(application)
 
     return http_server
 
@@ -189,6 +192,6 @@ if __name__ == "__main__":
 
     callhistory = AsteriskCallHistory(configuration)
 
-    app = make_app(configuration['options']['cert'], configuration['options']['key'])
+    app = make_app(configuration['options'].get('cert'), configuration['options'].get('key'))
     app.listen(5002)
     tornado.ioloop.IOLoop.current().start()
